@@ -1,9 +1,10 @@
-from db import get_conn, get_file_logger
+from db import (get_conn, get_file_logger)
+
 from lib.helpers import validate_type
-from configs.error_logs_files_name import BANKS_MODELS_FILE_NAME
 
-logger = get_file_logger(BANKS_MODELS_FILE_NAME)
+from configs.error_logs_files_name import BANKS_ERROR_FILE_NAME
 
+logger = get_file_logger(BANKS_ERROR_FILE_NAME)
 
 def insert_bank(slug: str, name: str, description: str | None, logo: str | None,
                 site: str | None, phone: str | None, email: str | None,

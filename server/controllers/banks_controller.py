@@ -1,10 +1,12 @@
 from geopy.distance import geodesic
 
-from models.bank_models import get_all_banks, get_bank_info, get_all_branches_with_coords
-from lib.helpers import get_file_logger
-from configs.error_logs_files_name import BANKS_CONTROLLER_FILE_NAME
+from models.bank_models import (get_all_banks, get_bank_info, get_all_branches_with_coords)
 
-logger = get_file_logger(BANKS_CONTROLLER_FILE_NAME)
+from lib.helpers import get_file_logger
+
+from configs.error_logs_files_name import BANKS_ERROR_FILE_NAME
+
+logger = get_file_logger(BANKS_ERROR_FILE_NAME)
 
 def _nearest_branches(
     user_lat: float,

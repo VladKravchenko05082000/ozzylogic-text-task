@@ -1,10 +1,11 @@
 import logging
-from logging import Logger 
 from pathlib import Path
 
-
-from configs.literal_types import TimeUnit
+from configs.regex import EMAIL_RE
 from configs.general_constants import SECOND_MULTIPLIER_CONFIG
+
+from configs.types import TimeUnit
+from logging import Logger 
 
 LOGS_DIR = Path(__file__).parent.parent / "logs"
 
@@ -54,3 +55,9 @@ def parse_list_param(value):
     if not value:
         return None
     return [v.strip() for v in value.split(",") if v.strip()]
+
+def validate_email(email: str) -> str:
+    email = (email or "").strip().lower()
+    if not EMAIL_RE.match(email):
+        raise ValueError("invalid email")
+    return email

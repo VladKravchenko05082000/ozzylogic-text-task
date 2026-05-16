@@ -46,8 +46,28 @@ CREATE TABLE IF NOT EXISTS bank_rates (
     UNIQUE (bank_id, currency)
 );
 
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    newsletter_enabled INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+    jwt_id TEXT PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    revoked INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_bank_branches_bank_id  ON bank_branches(bank_id);
 CREATE INDEX IF NOT EXISTS idx_bank_branches_coords   ON bank_branches(latitude, longitude);
 CREATE INDEX IF NOT EXISTS idx_bank_rates_bank_id     ON bank_rates(bank_id);
 CREATE INDEX IF NOT EXISTS idx_bank_rates_currency    ON bank_rates(currency);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_refresh_user ON refresh_tokens(user_id);
 """

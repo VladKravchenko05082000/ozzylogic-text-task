@@ -1,6 +1,8 @@
 from models.rate_models import (get_all_currency, get_latest_rates, get_nbu_latest, get_average_rates)
+
 from lib.helpers import parse_list_param
-from configs.general_constants import SUPPORTED_CURRENCIES, SUPPORTED_BANKS
+
+from configs.general_constants import (SUPPORTED_CURRENCIES, SUPPORTED_BANKS)
 
 def get_supported_currency_list(*, query, **_):
     currency_list = get_all_currency()

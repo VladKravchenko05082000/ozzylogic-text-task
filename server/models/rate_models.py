@@ -1,11 +1,13 @@
 from typing import Optional
 
 from db import (get_conn, get_file_logger)
+
 from lib.helpers import validate_type
-from configs.error_logs_files_name import RATE_MODELS_FILE_NAME
+
+from configs.error_logs_files_name import RATES_ERROR_FILE_NAME
 from configs.general_constants import SUPPORTED_CURRENCIES
 
-logger = get_file_logger(RATE_MODELS_FILE_NAME)
+logger = get_file_logger(RATES_ERROR_FILE_NAME)
 
 def insert_min_fin_rate(bank_slug: str, currency: str, buy: float, sell: float):
     if not validate_type(bank_slug, str, "bank_slug", logger):

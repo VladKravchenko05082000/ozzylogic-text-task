@@ -2,16 +2,17 @@ from datetime import date, timedelta
 
 from http_clients.minfin import min_fin_fetch_bank_rates
 from http_clients.nbu import fetch_nbu_rates
+from models.rate_models import (insert_min_fin_rate, insert_nbu_rate)
+
+from lib.helpers import (get_file_logger, validate_type)
+
 from configs.general_constants import SUPPORTED_CURRENCIES, SUPPORTED_BANKS
 from configs.error_logs_files_name import SYNC_ERROR_FILE_NAME
-from lib.helpers import (get_file_logger, validate_type)
-from models.rate_models import insert_min_fin_rate, insert_nbu_rate
 
 logger = get_file_logger(SYNC_ERROR_FILE_NAME)
 
 _SUPPORTED_BANKS = set(SUPPORTED_BANKS)
 _MAX_DATE_RETRIES = 7
-
 
 def _fetch_min_fin_rates_with_fallback(currency: str) -> list:
     for days_ago in range(_MAX_DATE_RETRIES):

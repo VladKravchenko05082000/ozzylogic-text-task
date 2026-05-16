@@ -2,9 +2,10 @@ import sqlite3
 import os
 from contextlib import contextmanager
 
+from lib.helpers import get_file_logger
+
 from configs.db_config import (SCHEMA, DB_PATH)
 from configs.error_logs_files_name import DB_ERROR_FILE_NAME
-from lib.helpers import get_file_logger
 
 logger = get_file_logger(DB_ERROR_FILE_NAME)
 

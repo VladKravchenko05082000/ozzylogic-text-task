@@ -1,8 +1,10 @@
 from http_clients.finance_ua import finance_ua_fetch_banks_list, finance_ua_fetch_branches
+from models.bank_models import (insert_bank, insert_branch)
+
+from lib.helpers import (get_file_logger, validate_type)
+
 from configs.general_constants import SUPPORTED_BANKS
 from configs.error_logs_files_name import SYNC_ERROR_FILE_NAME
-from lib.helpers import get_file_logger, validate_type
-from models.bank_models import insert_bank, insert_branch
 
 logger = get_file_logger(SYNC_ERROR_FILE_NAME)
 
@@ -54,7 +56,6 @@ def _parse_branch_entry(raw: dict, bank_slug: str) -> dict | None:
 
 
 def sync_banks():
-    print("-------------------Banks-----------------------")
     try:
         all_banks = finance_ua_fetch_banks_list()
     except Exception as e:
@@ -96,7 +97,6 @@ def sync_banks():
 
 
 def sync_branches():
-    print("-------------------Branches-----------------------")
     for slug in SUPPORTED_BANKS:
         try:
             raw_list = finance_ua_fetch_branches(slug)

@@ -1,8 +1,9 @@
 DB_ERROR_FILE_NAME = "db_errors.log"
 
-RATE_MODELS_FILE_NAME = "rate_models_errors.log"
-BANKS_MODELS_FILE_NAME = "banks_models_errors.log"
-
 SYNC_ERROR_FILE_NAME = "sync_errors.log"
 
-BANKS_CONTROLLER_FILE_NAME = "banks_controller_errors.log"
+RATES_ERROR_FILE_NAME = "rate_models_errors.log"
+BANKS_ERROR_FILE_NAME = "banks_flow_errors.log"
+USER_ERROR_FILE_NAME = "user_models_errors.log"
+
+AUTH_FLOW_ERROR_FILE_NAME = "auth_flow_errors.log"

@@ -8,8 +8,7 @@ from configs.general_constants import (RATES_INTERVAL_MINUTES_TIME, BANKS_UPDATE
 from lib.helpers import format_seconds_to_define_unit
 
 from typing import Callable
-from configs.literal_types import TimeUnit
-
+from configs.types import TimeUnit
 
 class _Scheduler:
     def __init__(self):
