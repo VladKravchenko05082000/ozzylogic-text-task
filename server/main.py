@@ -12,10 +12,10 @@ logger = get_file_logger(SYNC_ERROR_FILE_NAME)
 if __name__ == "__main__":
     init_db()
 
-    try:
-     sync_all()
-    except:
-     logger.exception("Initial sync failed")
+    # try:
+    #  sync_all()
+    # except:
+    #  logger.exception("Initial sync failed")
 
     scheduler = start_scheduler()
 

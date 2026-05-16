@@ -2,6 +2,7 @@ import logging
 from logging import Logger 
 from pathlib import Path
 
+
 from configs.literal_types import TimeUnit
 from configs.general_constants import SECOND_MULTIPLIER_CONFIG
 
@@ -47,3 +48,9 @@ def validate_type(value, expected_type, param_name: str, logger: Logger):
 def format_seconds_to_define_unit(interval: float, unit: TimeUnit = "minute"):
     multiplier = SECOND_MULTIPLIER_CONFIG.get(unit)
     return interval * multiplier
+
+
+def parse_list_param(value):
+    if not value:
+        return None
+    return [v.strip() for v in value.split(",") if v.strip()]
