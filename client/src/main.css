@@ -80,6 +80,9 @@
   --info: #2563eb;
   --info-foreground: #ffffff;
   --info-muted: #dbeafe;
+
+  --skeleton: #dbd8d5;
+  --skeleton-shine: #f0eeec;
 }
 
 .dark {
@@ -115,6 +118,9 @@
   --info: #3b82f6;
   --info-foreground: #ffffff;
   --info-muted: #1e3a8a;
+
+  --skeleton: #3a3a3f;
+  --skeleton-shine: #4c4c52;
 }
 
 @layer base {

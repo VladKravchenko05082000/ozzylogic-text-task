@@ -1,49 +1,49 @@
-Дисклеймер: Всі задачі були вирішені за допомогою Claude Code.
+Disclaimer: All tasks were solved using Claude Code, Claude.ai, and Grok.ai
 
 1.  Server
-    Промти:
-    Підготуй мені список необхідних бібліотек для розробки додатку на чистому python за наступними вимогами:(вимоги із тз)
+    Promts:
+    Prepare me a list of necessary libraries for developing an application in pure Python according to the following requirements: (requirements from the technical specification)
 
-    Сгенеруй код для запуску серверу, з можливістю його виключити через гарячі клавіші на чистому python без використання фреймворків
+    Generate code for launching the server, with the ability to shut it down via hotkeys, in pure Python without using frameworks
 
-    Реалізуй хелпер для логування помилок через logger. Запис виконувати в папку logs. Хелпер в себе приймає назву файла, і якщо такого файла нема, то створює і записує в нього необхідні помилки, або просто дописує в нього нову помилку
+    Implement a helper for logging errors via logger. Write logs to the logs folder. The helper accepts the file name as input, and if no such file exists, it creates one and writes the necessary errors to it, or simply appends a new error to it
 
-    Реалізуй мені sql запит для формування схеми бази данних з перевіркою чи існує таблиця в бд чи ні.
-    Приблізні вимоги по таблицям:
-    Таблиця банків - повина містити наступні поля(назва, опис, логотип, сайт, номер телефону, електронна пошта, юридична адреса, рейтинг)
-    Таблиця для координатів місця знаходження відділень банку - адреса, координати, номер телефону, назва відділення
-    Таблиця для курсу валют nbu - валюта та її рейт
-    Таблиця для курсу валют по конкретному банку - валюта та назва банку
+    Implement an SQL query for forming the database schema with a check for whether the table already exists in the database.
+    Approximate requirements for the tables:
+    Banks table — should contain the following fields (name, description, logo, website, phone number, email, legal address, rating)
+    Table for coordinates of bank branch locations — address, coordinates, phone number, branch name
+    Table for NBU currency rates — currency and its rate
+    Table for currency rates of a specific bank — currency and bank name
 
-    Створи sync rates handlers який би отримував би списки курси валют з api minfin()зі списку валют які знаходяться у currency(функція min_fin_fetch_bank_rates у http-clients\minfin) без запису в бд, тільки вивід у консоль
+    Create sync rates handlers that would fetch lists of currency rates from the minfin API() from the list of currencies located in currency (the min_fin_fetch_bank_rates function in http-clients\minfin) without writing to the database, only output to the console
 
-    Для sync_min_fin_bank_rates передавай сьогоднішню дату як date, якщо rates повертається пустим, робишь ще 1 запит, але з датой на день раніше, і так максимум 7 разів
+    For sync_min_fin_bank_rates pass today's date as date; if rates is returned empty, make 1 more request, but with the date one day earlier, and so on up to 7 times maximum
 
-    Напиши логіку на нативному python яка би запускала тред, який через певний проміжок часу виконував би переданний коллбек.
-    Проміжок часу в приймати як хвилини. Коллбек та проміжок часу приймати через аргументи
+    Write logic in native Python that would launch a thread which, after a certain time interval, would execute a passed callback.
+    Accept the time interval in minutes. Accept the callback and time interval via arguments
 
-    Сгенеруй отримання sync функцій за прикладом з rates/controller але для банків, а саме - за допомогою finance_ua_fetch_banks_list отримати данні о всіх банках які визначенні в general_constants як SUPPORTED_BANKS конфіг, та також для цих банків за допомогою finance_ua_fetch_branches отримати данні про відділення цих банків. Також на данному етапі запис до бази мені не потрібно, приклад реалізції візьми з rates/controller, парсинг сгідно данних згідно описанної схеми в db_config SCHEMA, таблиці banks та bank_branches
+    Generate retrieval of sync functions following the example from rates/controller but for banks — namely, using finance_ua_fetch_banks_list obtain data on all banks that are defined in general_constants as the SUPPORTED_BANKS config, and also for these banks using finance_ua_fetch_branches obtain data about the branches of these banks. Also, at this stage writing to the database is not required; take the implementation example from rates/controller, parsing the data according to the schema described in db_config SCHEMA, the banks and bank_branches tables
 
-    Реалізуй запит до бд який би мені повернув з таблиці banks наступні данні - назва, логотип, рейтинг, номер телефону, електронна пошта. Потрібно повернути ці данні по всім банкам
+    Implement a database query that would return the following data from the banks table — name, logo, rating, phone number, email. This data needs to be returned for all banks
 
-    Створи функцію get_bank_info яка буде приймати в себе slug, та буде повертати данні про банк якій відповідає переданному slug, данні потрібні наступні - Отримання всієї інформації про конкретний банк з поточними курсами валют та списком відділень. Конкретний банк берешь з таблиці banks, курси з таблиці bank_rates, відділення з таблиці bank_branches.
+    Create a function get_bank_info that will accept a slug and return data about the bank corresponding to the passed slug; the required data is as follows — Retrieval of all information about a specific bank with current currency rates and the list of branches. You take the specific bank from the banks table, rates from the bank_rates table, branches from the bank_branches table.
 
-    Сгенеруй функцію на основі бібліотеки geopy яка би обирала список найблішчих відділень в радіусі 10 км
+    Generate a function based on the geopy library that would select a list of the nearest branches within a 10 km radius
 
-    Реалізуй запит до бд який би з таблиці bank_branches отримував би координати всіх відділень банків, також одразу створи відповідний контроллер в bank controllers який буде приймати координати latitude та longtitude з парамсів, також додай перевірку на те що вони обов'язково повинні бути
+    Implement a database query that would fetch the coordinates of all bank branches from the bank_branches table; also, immediately create a corresponding controller in bank controllers that will accept latitude and longitude coordinates from the params, and also add a check that they are required
 
-    Реалізуй запит до бд який би отримував актуальний список курсів валют з можливістю фільтрації даних за конкретними банками та валютами. Данні по валютам можешь взяти з bank_rates таблиці. Зроби за прикладом як реалізовано в bank_models.py функція def get_bank_info. Ця функція є прикладом як повинна виглядати реалізація
+    Implement a database query that would retrieve an up-to-date list of currency rates with the ability to filter the data by specific banks and currencies. You can take the currency data from the bank_rates table. Do it following the example as implemented in bank_models.py, the def get_bank_info function. This function is an example of what the implementation should look like
 
-    Реалізуй запит до бд для отримання актуального курсу валют nbu
+    Implement a database query for retrieving the current NBU currency rates
 
-    Реалізуй запит до бд для отримання середнього курсу по всіх банках. Данні можешь взяти з таблиці bank_rates
+    Implement a database query for retrieving the average rate across all banks. You can take the data from the bank_rates table
 
-    Додай до існуючої бд схеми ще таблицю юзера в якому буде: емайл, хеш паролю, стан підписки на розсилку повідомленнь про зміну курсу
+    Add to the existing database schema another users table which will contain: email, password hash, subscription status for notifications about rate changes
 
-    Додай до існуючої бд схеми ще таблицю для збереження рефреш токену
+    Add to the existing database schema another table for storing the refresh token
 
-    Створи в моделі юзера функцій реєстрації юзера, функція знаходження юзера по email для перевірки чи не зареєстрованний юзер вже с таким емейлом, функція знаходження юзера по його id та функцію яка буде оновлювати його наступні поля:
-    email, password_hash, newsletter_enabled. Для отримання контексту сутності юзера, ось таблиця users
+    Create in the user model functions for user registration, a function for finding a user by email to check whether a user is not already registered with such an email, a function for finding a user by their id, and a function that will update the following fields:
+    email, password_hash, newsletter_enabled. For context of the user entity, here is the users table
     {id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
@@ -51,54 +51,96 @@
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP}
 
-    Сгенеруй мені хелпери для декодування авторизаційного токену та для отримання пар токенів рефреш та авторизаційного
+    Generate helpers for me for decoding the authorization token and for obtaining pairs of refresh and authorization tokens
 
-    Сгенеруй мені middleware для захищення не публічних api ендпоінтов за допомогою bearer token
+    Generate middleware for me for protecting non-public API endpoints using a bearer token
 
-    Сгенеруй ендпоінти для рефрешу токену та логоуту
+    Generate endpoints for token refresh and logout
 
-    Сгенеруй ендпоінти для оновлення данних користувача, та для зміни паролю
+    Generate endpoints for updating user data and for changing the password
 
-    Задачі вирішенні завдяки ШІ:
-    Фікс багів на основі повідомлень з тресування
-    Запуск серверу
-    Логування
-    Ініціалізація схеми бд
-    Отримання данних про курси валют
-    Реалізація планувальника подій
-    Створення моделі для запису данних о банках і відділеннях
-    Створення ендпоінту для отримання найближчих відділень банків
-    Створення функцій отримання з бази даних списку актульних валют з фільтрацією за конкретними банками та валютами
-    Отримання середнього курсу валют по всіх підтримуємих банках
-    Створення таблиць юзера та рефреш токену
-    Створення ендпоінту для регістрації юзера
-    Створення ендпоінту для логіну юзера
-    Створення middleware для захищення не публічних ендпоінтів за допомогою bearer токену
-    Створення ендпоінтів для рефрешу токену та логоуту
-    Створення ендпоінтів для оновлення данних користувача, та для зміни паролю
+    Implement a database query that would retrieve data on currency rates from the bank_rates table over a specified time period
 
-    Частини коду були доопрацьовані вручну:
-    validate_type(Виконує роль логування на випадок помилки программіста або неочікуванних вхідних данних)
-    get_file_logger (Централізоване логування помилок у відповідні файли, аналог будь-якого модуля логування на будь-якому хостингу)
-    Будь які конфіги
+    Tasks solved thanks to AI:
+    Fixing bugs based on messages from tracing
+    Server launch
+    Logging
+    Database schema initialization
+    Retrieving data on currency rates
+    Implementation of the event scheduler
+    Creating a model for writing data about banks and branches
+    Creating an endpoint for retrieving the nearest bank branches
+    Creating functions for retrieving from the database the list of current currencies with filtering by specific banks and currencies
+    Retrieving the average currency rate across all supported banks
+    Creating user and refresh token tables
+    Creating an endpoint for user registration
+    Creating an endpoint for user login
+    Creating middleware for protecting non-public endpoints using a bearer token
+    Creating endpoints for token refresh and logout
+    Creating endpoints for updating user data and for changing the password
+    Creating an endpoint for retrieving currency rate history
+
+    Parts of the code were refined manually:
+    validate_type (Plays the role of logging in case of a programmer error or unexpected input data)
+    get_file_logger (Centralized error logging into the corresponding files, an analog of any logging module on any hosting service)
+    Any configs
     parse_rate_entry
     sync_nbu_rates
-    Додавання логіки приведення часу виконнаня для планувальника згідно з переданим типом часу, наприклад час який я передаю, це може бути години, хвилини, секунди
+    Adding logic for converting the execution time for the scheduler according to the passed time type — for example, the time I pass can be hours, minutes, or seconds
     insert_min_fin_rate
     insert_nbu_rate
     get_full_bank_info
     get_nearest_branches_with_coords
-    get_latest_currency_list(частина перевірки на валідні currency та banks в query)
-    session_tokens_models - вцілому після генерації допрацював саме вигляд та перевірки в функціях
-    user_models - вцілому після генерації допрацював саме вигляд та перевірки в функціях
-    jwt_helpers - логування та виправлення назв функцій та свойств
+    get_latest_currency_list (the part with validation of valid currency and banks in the query)
+    session_tokens_models — overall, after generation I refined the appearance itself and the checks within the functions
+    user_models — overall, after generation I refined the appearance itself and the checks within the functions
+    jwt_helpers — logging and fixing function and property names
+    Endpoint for retrieving currency rate history
 
-    Рішення були змінені після генерації:
-    Якщо запитати на початку дня данні по курсам валют з мінфіну, то повернеться пуста дата, було вирішенно добавити обрабку ітерування у проміжках неділі по курсам валют(функція fetch_min_fin_rates_with_fallback)
-    Реалізація планувальника подій
-    insert_min_fin_rate(зміни пов'язанні з сумістністю з схемою)
-    insert_nbu_rate(зміни пов'язанні з сумістністю з схемою)
-    parse_bank_entry - rating виявляється може бути і null, але це як на мене трохи дивно, тому fallback дає нам зрозуміти що ми rating завжди хочемо бачити як float.
+    Solutions were modified after generation:
+    If you request currency rate data from minfin at the beginning of the day, an empty date will be returned; it was decided to add handling for iterating through the intervals of the week for currency rates (the fetch_min_fin_rates_with_fallback function)
+    Implementation of the event scheduler
+    insert_min_fin_rate (changes related to compatibility with the schema)
+    insert_nbu_rate (changes related to compatibility with the schema)
+    parse_bank_entry — rating, as it turns out, can also be null, but this is, in my opinion, a bit strange, so the fallback lets us understand that we always want to see rating as a float.
     nearest_branches
     get_latest_rates
-    get_nbu_latest(логіка з конкатинацією для placeholder)
+    get_nbu_latest (logic with concatenation for placeholder)
+
+2.  Client
+    Prompts:
+    viewing the list of banks and detailed information about a bank
+    viewing current currency rates
+    filtering rates by banks and currencies
+    viewing the NBU rate and the average rate across banks
+    viewing statistics on rate changes over a selected period
+    obtaining the nearest bank branches based on the user's geolocation
+    Based on these requirements, generate a minimal boilerplate for the pages in views, and add them via lazy-loading in routes
+
+    For branches, validation of the input fields will also need to be written for the inputs, similar to LoginForm. Use nearestBranchesSchema as the schema. Also add 1 more select with the maximum distance, with the following options — 1, 5, 10, 20, 50, 100
+
+    I have some really very similar components with tables (example code of the tables)
+    Make them into a reusable component that will accept a config for columns and rows.
+
+    In onSubmit, in case of an error, call setError from useForm and pass this error in case it is present in (the element with the error)
+
+    Implement refresh (via the refresh function in authApi) of the authorization token in axios on a 401 error
+
+    Tasks solved thanks to AI:
+    Creating the routing
+    Debugging and typing of the component library
+    Generation of markup according to the given styles (there were a lot of prompts along the lines of — here are the CSS styles and HTML code, generate me this markup in Tailwind, so I decided to consolidate that into 1 such section)
+    Implementation of the configurable table component
+    Token refresh in the axios interceptor
+    Determining the user's geolocation
+
+    Parts of the code were refined manually:
+    Login logic
+    Registration logic
+    Logic for retrieving currency rate history, and its parsing on the frontend
+    All stores were manually refined
+
+    Solutions were modified after generation:
+    Validation of the inputs on branches
+    Logic for retrieving currency rate history, and its parsing on the frontend
+    Overall all the pages, because initially I made them purely static

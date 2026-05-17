@@ -1,21 +1,35 @@
 Server:
 
-## Запуск
+## Setup
 
 ```bash
 cd server
 python -m venv venv
-Якщо Windows - venv\Scripts\activate якщо Лінукс або MacOS - source venv/bin/activate
+If Windows - venv\Scripts\activate, if Linux or MacOS - source venv/bin/activate
 pip install -r requirements.txt
 python -m main
 ```
 
-ВАЖЛИВО!!!!! -
+# IMPORTANT
 
-# ВАЖЛИВО
+I intentionally did not add the .env file to .gitignore for the convenience of reviewing the assignment.
 
-Я свідомо не заносив .env файл у гітігнор для комфорту перевірки тз
+# Potential Improvements
 
-# Потенційні покращення
+Add a request limiter for a certain time period
+Pagination for large volumes of data
 
-Додати лімітер запитів на певний проміжок часу
+Client:
+
+## Setup
+
+```bash
+cd client
+npm i
+npm run dev
+```
+
+# Potential Improvements
+
+Pagination for large volumes of data
+Add theme switcher

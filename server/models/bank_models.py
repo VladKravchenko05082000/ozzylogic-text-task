@@ -61,7 +61,7 @@ def get_all_banks() -> list[dict]:
     with get_conn() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT name, logo, rating, phone, email FROM banks ORDER BY name"
+            "SELECT name, logo, rating, phone, email, slug FROM banks ORDER BY name"
         )
 
         rows = cursor.fetchall()

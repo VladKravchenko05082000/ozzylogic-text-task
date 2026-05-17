@@ -6,11 +6,13 @@ import BurgerMenuIcon from "@/components/icons/BurgerMenuIcon.vue";
 import CloseIcon from "@/components/icons/CloseIcon.vue";
 
 import type { PropType } from "vue";
-import { NavLinkItem } from "@/types/types";
+import { NavLinkItem } from "@/types/general-types";
 
 defineProps({
   navLinks: { type: Array as PropType<NavLinkItem[]>, required: true },
 });
+
+const emit = defineEmits<{ logout: [] }>();
 
 const route = useRoute();
 const open = ref(false);
@@ -26,7 +28,9 @@ const close = () => {
 <template>
   <div>
     <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-      <RouterLink to="/rates" class="text-sm font-semibold tracking-tight">Курси валют</RouterLink>
+      <RouterLink to="/rates" class="text-sm font-semibold tracking-tight"
+        >Currency Rates</RouterLink
+      >
 
       <button
         class="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-secondary cursor-pointer"
@@ -71,8 +75,9 @@ const close = () => {
 
           <button
             class="w-full text-left rounded-md px-3 py-2 text-sm text-destructive cursor-pointer"
+            @click="emit('logout')"
           >
-            Вийти
+            Logout
           </button>
         </div>
       </div>

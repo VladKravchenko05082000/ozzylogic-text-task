@@ -23,4 +23,10 @@ export default defineConfigWithVueTs(
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
   skipFormatting,
+
+  {
+    rules: {
+      '@typescript-eslint/no-empty-object-type': 'off',
+    },
+  },
 )

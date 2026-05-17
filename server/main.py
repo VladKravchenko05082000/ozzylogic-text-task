@@ -14,10 +14,10 @@ if __name__ == "__main__":
     init_db()
 
     # Database seeding is initialized here. If you need to restart the server frequently, comment out this code.
-    # try:
-    #  sync_all() 
-    # except:
-    #  logger.exception("Initial sync failed")
+    try:
+     sync_all() 
+    except:
+     logger.exception("Initial sync failed")
 
     scheduler = start_scheduler()
 

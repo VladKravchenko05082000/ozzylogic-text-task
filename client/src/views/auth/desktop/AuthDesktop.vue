@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/stores/authStore";
 import UiTabSwitcher from "@/components/ui/UiTabSwitcher.vue";
 import LoginForm from "../components/LoginForm.vue";
 import RegisterForm from "../components/RegisterForm.vue";
-import type { AuthTab } from "@/stores/auth";
+import type { AuthTab } from "@/stores/authStore";
 
 const auth = useAuthStore();
 

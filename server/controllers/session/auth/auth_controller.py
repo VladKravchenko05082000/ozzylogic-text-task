@@ -46,7 +46,9 @@ def user_register(*, body, **_):
             email=email,
             password_hash=hash_password(password),
         )
-        return {"status": 201, "response": {"user": find_user_by_id(user_id)}}
+
+        user, tokens = _user_login_user(email, password)
+        return {"status": 201, "response": {"user": user, "tokens": serialize_tokens(tokens)}}
 
     except ValueError as e:
         logger.error("user_register validation error: %s", e)

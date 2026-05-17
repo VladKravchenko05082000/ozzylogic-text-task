@@ -2,11 +2,13 @@
 import { useRoute } from "vue-router";
 
 import type { PropType } from "vue";
-import { NavLinkItem } from "@/types/types";
+import { NavLinkItem } from "@/types/general-types";
 
 defineProps({
   navLinks: { type: Array as PropType<NavLinkItem[]>, required: true },
 });
+
+const emit = defineEmits<{ logout: [] }>();
 
 const route = useRoute();
 
@@ -17,7 +19,9 @@ const isActive = (path: string) =>
 <template>
   <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
     <div class="flex items-center gap-8">
-      <RouterLink to="/rates" class="text-sm font-semibold tracking-tight">Курси валют</RouterLink>
+      <RouterLink to="/rates" class="text-sm font-semibold tracking-tight"
+        >Currency Rates</RouterLink
+      >
 
       <nav class="flex items-center gap-1">
         <RouterLink
@@ -51,8 +55,9 @@ const isActive = (path: string) =>
 
       <button
         class="rounded-md px-3 py-1.5 text-sm text-destructive hover:text-foreground hover:bg-secondary/60 cursor-pointer"
+        @click="emit('logout')"
       >
-        Вийти
+        Logout
       </button>
     </div>
   </div>

@@ -3,6 +3,9 @@ import { computed, ref } from "vue";
 
 import { useForm } from "@vuehookform/core";
 
+import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from "vue-router";
+
 import PasswordEyeOpenIcon from "@/components/icons/password-eyes/PasswordEyeOpenIcon.vue";
 import PasswordEyeCloseIcon from "@/components/icons/password-eyes/PasswordEyeCloseIcon.vue";
 import UiInput from "@/components/ui/UiInput.vue";
@@ -10,17 +13,20 @@ import UiButton from "@/components/ui/UiButton.vue";
 
 import { authSchema } from "@/schemas/authSchema";
 
-const { register, handleSubmit, formState, watch } = useForm({
+const { register, handleSubmit, formState, watch, setError } = useForm({
   schema: authSchema,
   defaultValues: {
     email: "",
     password: "",
   },
-  mode: "onBlur",
+  mode: "onChange",
 });
 
 const emailValue = watch("email");
 const passwordValue = watch("password");
+
+const authStore = useAuthStore();
+const router = useRouter();
 
 const showPassword = ref(false);
 
@@ -29,11 +35,18 @@ const isSubmitDisabled = computed(
     formState.value.isSubmitting ||
     !emailValue.value ||
     !passwordValue.value ||
-    !formState.value.isValid,
+    Object.keys(formState.value.errors).some((key) => key !== "root"),
 );
 
-const onSubmit = handleSubmit((data) => {
-  console.log("Creating account:", data);
+const onSubmit = handleSubmit(async (data) => {
+  try {
+    await authStore.register(data);
+
+    router.push("/rates");
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Registration failed";
+    setError("root", { type: "manual", message });
+  }
 });
 </script>
 
@@ -68,6 +81,9 @@ const onSubmit = handleSubmit((data) => {
       </div>
     </div>
 
+    <p v-if="formState.errors.root" class="text-xs text-destructive">
+      {{ formState.errors.root.message }}
+    </p>
     <UiButton
       type="submit"
       variant="primary"

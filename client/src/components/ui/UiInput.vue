@@ -8,6 +8,7 @@ const props = defineProps<{
   disabled?: boolean;
   label?: string;
   error?: string;
+  step?: string | number;
 }>();
 
 const emit = defineEmits<{
@@ -19,10 +20,11 @@ const emit = defineEmits<{
   <div class="space-y-1.5">
     <label v-if="props.label" class="text-sm font-medium text-foreground">{{ props.label }}</label>
     <input
-      :value="props.modelValue"
+      v-bind="props.modelValue !== undefined ? { value: props.modelValue } : {}"
       :type="props.type ?? 'text'"
       :placeholder="props.placeholder"
       :disabled="props.disabled"
+      :step="props.step"
       @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       :class="[
         'flex h-9 w-full rounded-md border bg-background px-3 py-1 text-sm',

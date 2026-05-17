@@ -7,59 +7,9 @@ import UiButton from "@/components/ui/UiButton.vue";
 import UiInput from "@/components/ui/UiInput.vue";
 import UiEmpty from "@/components/ui/UiEmpty.vue";
 import { nearestBranchesSchema } from "@/schemas/branchesSchema";
+import { useBanksStore, type NearestBranch } from "@/stores/banksStore";
 
-interface Branch {
-  bank_name: string;
-  name: string;
-  address: string;
-  phone: string | null;
-  distance_km: number;
-}
-
-const mockBranches: Branch[] = [
-  {
-    bank_name: "PrivatBank",
-    name: "Branch №1",
-    address: "12 Khreshchatyk St., Kyiv",
-    phone: "+380 (44) 111-11-11",
-    distance_km: 0.3,
-  },
-  {
-    bank_name: "Monobank",
-    name: "Branch №2",
-    address: "5 Baseina St., Kyiv",
-    phone: null,
-    distance_km: 0.7,
-  },
-  {
-    bank_name: "Oschadbank",
-    name: "Branch №3",
-    address: "21 Velyka Vasylkivska St., Kyiv",
-    phone: "+380 (44) 222-22-22",
-    distance_km: 1.1,
-  },
-  {
-    bank_name: "UkrSibbank",
-    name: "Branch №4",
-    address: "8 Lesia Ukrainka Blvd., Kyiv",
-    phone: "+380 (44) 333-33-33",
-    distance_km: 1.5,
-  },
-  {
-    bank_name: "Raiffeisen Bank",
-    name: "Branch №5",
-    address: "3 Instytutska St., Kyiv",
-    phone: null,
-    distance_km: 2.0,
-  },
-  {
-    bank_name: "PrivatBank",
-    name: "Branch №6",
-    address: "44 Peremohy Ave., Kyiv",
-    phone: "+380 (44) 444-44-44",
-    distance_km: 2.6,
-  },
-];
+const banksStore = useBanksStore();
 
 const { register, handleSubmit, formState, setValue, watch } = useForm({
   schema: nearestBranchesSchema,
@@ -75,12 +25,13 @@ const lngValue = watch("lng");
 const maxCountValue = watch("maxCount");
 const maxDistanceValue = watch("maxDistance");
 
-const branches = ref<Branch[]>([]);
+const branches = ref<NearestBranch[]>([]);
 const geoError = ref<string | null>(null);
 
 const isSubmitDisabled = computed(
   () =>
     formState.value.isSubmitting ||
+    banksStore.isLoading ||
     latValue.value == null ||
     lngValue.value == null ||
     !formState.value.isValid,
@@ -103,10 +54,13 @@ function useGeolocation() {
   );
 }
 
-const onSubmit = handleSubmit((data) => {
-  branches.value = mockBranches
-    .filter((b) => b.distance_km <= data.maxDistance)
-    .slice(0, data.maxCount);
+const onSubmit = handleSubmit(async (data) => {
+  branches.value = await banksStore.fetchNearestBranches({
+    latitude: String(data.lat),
+    longitude: String(data.lng),
+    distance_limit: String(data.maxDistance),
+    limit: data.maxCount,
+  });
 });
 </script>
 
@@ -119,6 +73,7 @@ const onSubmit = handleSubmit((data) => {
         <UiInput
           v-bind="register('lat')"
           type="number"
+          step="any"
           label="Latitude (lat)"
           placeholder="50.4501"
           :error="formState.errors.lat ? String(formState.errors.lat) : undefined"
@@ -126,6 +81,7 @@ const onSubmit = handleSubmit((data) => {
         <UiInput
           v-bind="register('lng')"
           type="number"
+          step="any"
           label="Longitude (lng)"
           placeholder="30.5234"
           :error="formState.errors.lng ? String(formState.errors.lng) : undefined"
@@ -174,7 +130,7 @@ const onSubmit = handleSubmit((data) => {
         </div>
       </div>
       <div class="mt-4 flex flex-wrap gap-2">
-        <UiButton type="submit" :disabled="isSubmitDisabled" :loading="formState.isSubmitting">
+        <UiButton type="submit" :disabled="isSubmitDisabled" :loading="banksStore.isLoading">
           Search
         </UiButton>
         <UiButton variant="secondary" type="button" @click="useGeolocation">
@@ -186,18 +142,18 @@ const onSubmit = handleSubmit((data) => {
   </form>
 
   <div v-if="branches.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-    <UiCard v-for="(b, i) in branches" :key="i" class="p-4">
+    <UiCard v-for="(branch, index) in branches" :key="index" class="p-4">
       <div class="flex items-start justify-between gap-2">
         <div class="flex-1 min-w-0">
-          <div class="text-sm font-medium truncate">{{ b.bank_name }}</div>
-          <div class="text-xs text-muted-foreground mt-0.5">{{ b.name || "Branch" }}</div>
+          <div class="text-sm font-medium truncate">{{ branch.bank_name }}</div>
+          <div class="text-xs text-muted-foreground mt-0.5">{{ branch.name || "Branch" }}</div>
         </div>
         <span class="text-xs font-medium text-foreground tabular-nums">
-          {{ b.distance_km }} km
+          {{ branch.distance_km }} km
         </span>
       </div>
-      <div class="text-xs text-muted-foreground mt-2">{{ b.address }}</div>
-      <div v-if="b.phone" class="text-xs text-muted-foreground mt-1">{{ b.phone }}</div>
+      <div class="text-xs text-muted-foreground mt-2">{{ branch.address }}</div>
+      <div v-if="branch.phone" class="text-xs text-muted-foreground mt-1">{{ branch.phone }}</div>
     </UiCard>
   </div>
 

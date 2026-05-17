@@ -152,3 +152,34 @@ def get_average_rates() -> list[dict]:
         rows = cursor.fetchall()
 
         return [dict(r) for r in rows]
+    
+
+
+def get_rates_history_model(
+    currency: str,
+    bank_slug: Optional[str],
+    date_from: str,
+    date_to: str,
+) -> list[dict]:
+    with get_conn() as conn:
+        cursor = conn.cursor()
+
+        sql = """
+            SELECT b.slug AS bank_slug, br.currency, br.buy, br.sell, br.updated_at
+            FROM bank_rates br
+            JOIN banks b ON b.id = br.bank_id
+        """
+        conditions: list[str] = ["br.currency = ?", "br.updated_at BETWEEN ? AND ?"]
+        params: list = [currency.upper(), date_from, date_to]
+
+        if bank_slug:
+            conditions.append("b.slug = ?")
+            params.append(bank_slug)
+
+        sql += " WHERE " + " AND ".join(conditions)
+        sql += " ORDER BY br.updated_at"
+
+        cursor.execute(sql, params)
+        rows = cursor.fetchall()
+
+    return [dict(r) for r in rows]

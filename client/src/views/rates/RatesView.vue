@@ -1,9 +1,8 @@
 <script setup lang="ts">
-type RatesItemType = { bank_slug: string; currency: string; buy: number; sell: number };
-type BanksItemType = { slug: string; name: string };
+import { ref, computed, onMounted } from "vue";
 
-import { ref } from "vue";
-
+import { useBanksStore } from "@/stores/banksStore";
+import { useCurrencyStore } from "@/stores/currencyStore";
 import PageHeader from "@/components/PageHeader.vue";
 import UiCard from "@/components/ui/UiCard.vue";
 import UiBadge from "@/components/ui/UiBadge.vue";
@@ -11,33 +10,15 @@ import UiEmpty from "@/components/ui/UiEmpty.vue";
 import UiSkeleton from "@/components/ui/UiSkeleton.vue";
 import UiTable, { type TableColumn } from "@/components/ui/UiTable.vue";
 
+const banksStore = useBanksStore();
+const currencyStore = useCurrencyStore();
+
 const selectedBanks = ref<string[]>([]);
 const selectedCurrencies = ref<string[]>([]);
 
-const currencies = ["USD", "EUR", "GBP", "PLN"];
-
-const banks: BanksItemType[] = [
-  { slug: "privatbank", name: "PrivatBank" },
-  { slug: "monobank", name: "Monobank" },
-  { slug: "oschadbank", name: "Oschadbank" },
-  { slug: "ukrsibbank", name: "UkrSibbank" },
-];
-
-const bankMap = Object.fromEntries(banks.map((bank) => [bank.slug, bank]));
-
-const rates: RatesItemType[] = [
-  { bank_slug: "privatbank", currency: "USD", buy: 39.5, sell: 40.1 },
-  { bank_slug: "privatbank", currency: "EUR", buy: 43.2, sell: 44.0 },
-  { bank_slug: "monobank", currency: "USD", buy: 39.8, sell: 40.3 },
-  { bank_slug: "monobank", currency: "EUR", buy: 43.5, sell: 44.2 },
-  { bank_slug: "monobank", currency: "GBP", buy: 50.1, sell: 51.0 },
-  { bank_slug: "oschadbank", currency: "USD", buy: 39.3, sell: 40.0 },
-  { bank_slug: "oschadbank", currency: "PLN", buy: 9.6, sell: 9.9 },
-  { bank_slug: "ukrsibbank", currency: "USD", buy: 39.6, sell: 40.2 },
-  { bank_slug: "ukrsibbank", currency: "EUR", buy: 43.1, sell: 43.9 },
-];
-
-const isLoading = false;
+const bankMap = computed(() =>
+  Object.fromEntries(banksStore.banks.map((bank) => [bank.slug, bank]))
+);
 
 const ratesColumns: TableColumn[] = [
   { key: "bank_slug", label: "Bank", tdClass: "font-medium" },
@@ -50,7 +31,23 @@ function toggle(list: string[], value: string) {
   const index = list.indexOf(value);
   if (index === -1) list.push(value);
   else list.splice(index, 1);
+  refresh();
 }
+
+function refresh() {
+  currencyStore.fetchRates({
+    banks: selectedBanks.value,
+    currencies: selectedCurrencies.value,
+  });
+}
+
+onMounted(async () => {
+  await Promise.all([
+    banksStore.fetchBanks(),
+    currencyStore.fetchCurrencies(),
+    currencyStore.fetchRates({ banks: [], currencies: [] }),
+  ]);
+});
 </script>
 
 <template>
@@ -65,11 +62,11 @@ function toggle(list: string[], value: string) {
         </div>
         <div class="flex flex-wrap gap-2">
           <button
-            v-for="currency in currencies"
+            v-for="currency in currencyStore.currencies"
             :key="currency"
             @click="toggle(selectedCurrencies, currency)"
             :class="[
-              'rounded-md px-3 py-1 text-xs font-medium transition-colors',
+              'rounded-md px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
               selectedCurrencies.includes(currency)
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-secondary text-secondary-foreground hover:bg-secondary/70',
@@ -86,11 +83,11 @@ function toggle(list: string[], value: string) {
         </div>
         <div class="flex flex-wrap gap-2">
           <button
-            v-for="bank in banks"
+            v-for="bank in banksStore.banks"
             :key="bank.slug"
             @click="toggle(selectedBanks, bank.slug)"
             :class="[
-              'rounded-md px-3 py-1 text-xs font-medium transition-colors',
+              'rounded-md px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
               selectedBanks.includes(bank.slug)
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-secondary text-secondary-foreground hover:bg-secondary/70',
@@ -104,13 +101,13 @@ function toggle(list: string[], value: string) {
   </UiCard>
 
   <!-- LOADING -->
-  <div v-if="isLoading" class="space-y-2">
+  <div v-if="currencyStore.isLoading" class="space-y-2">
     <UiSkeleton v-for="skeletonIndex in 5" :key="skeletonIndex" class="h-14" />
   </div>
 
   <!-- LIST -->
-  <UiCard v-else-if="rates.length" class="overflow-hidden">
-    <UiTable :columns="ratesColumns" :rows="rates" rowClass="hover:bg-accent/40 transition-colors">
+  <UiCard v-else-if="currencyStore.rates.length" class="overflow-hidden">
+    <UiTable :columns="ratesColumns" :rows="currencyStore.rates" rowClass="hover:bg-accent/40 transition-colors">
       <template #cell-bank_slug="{ row }">
         {{ bankMap[row.bank_slug]?.name || row.bank_slug }}
       </template>

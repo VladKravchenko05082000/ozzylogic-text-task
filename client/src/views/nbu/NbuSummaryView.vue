@@ -1,31 +1,49 @@
 <script setup lang="ts">
+import { computed, onMounted } from "vue";
+
+import { useCurrencyStore } from "@/stores/currencyStore";
 import PageHeader from "@/components/PageHeader.vue";
 import UiCard from "@/components/ui/UiCard.vue";
 import UiBadge from "@/components/ui/UiBadge.vue";
+import UiSkeleton from "@/components/ui/UiSkeleton.vue";
 import UiTable, { type TableColumn } from "@/components/ui/UiTable.vue";
 
 interface RateRow {
   currency: string;
   nbu: number | null;
-  avg_buy: number | null;
-  avg_sell: number | null;
+  buy: number | null;
+  sell: number | null;
 }
+
+const currencyStore = useCurrencyStore();
 
 const columns: TableColumn[] = [
   { key: "currency", label: "Currency" },
   { key: "nbu", label: "NBU", align: "right" },
-  { key: "avg_buy", label: "Avg. buy", align: "right" },
-  { key: "avg_sell", label: "Avg. sell", align: "right" },
+  { key: "buy", label: "Avg. buy", align: "right" },
+  { key: "sell", label: "Avg. sell", align: "right" },
 ];
 
-const rows: RateRow[] = [
-  { currency: "USD", nbu: 41.2311, avg_buy: 39.5, avg_sell: 40.1 },
-  { currency: "EUR", nbu: 44.987, avg_buy: 42.8, avg_sell: 43.6 },
-  { currency: "GBP", nbu: 52.1045, avg_buy: 49.2, avg_sell: 50.4 },
-  { currency: "PLN", nbu: 10.312, avg_buy: 9.6, avg_sell: 10.1 },
-  { currency: "CHF", nbu: 46.754, avg_buy: 44.1, avg_sell: 45.3 },
-  { currency: "JPY", nbu: 0.2734, avg_buy: null, avg_sell: null },
-];
+const rows = computed<RateRow[]>(() => {
+  const map: Record<string, RateRow> = {};
+
+  for (const nbuRate of currencyStore.summaryNbuRatesList.nbu_latest_rates) {
+    map[nbuRate.currency] = { currency: nbuRate.currency, nbu: nbuRate.rate, buy: null, sell: null };
+  }
+
+  for (const bankRate of currencyStore.summaryNbuRatesList.average_banks_rates) {
+    if (!map[bankRate.currency]) {
+      map[bankRate.currency] = { currency: bankRate.currency, nbu: null, buy: null, sell: null };
+    }
+    const row = map[bankRate.currency]!;
+    row.buy = bankRate.avg_buy;
+    row.sell = bankRate.avg_sell;
+  }
+
+  return Object.values(map);
+});
+
+onMounted(() => currencyStore.fetchNbuSummaryRates());
 </script>
 
 <template>
@@ -34,14 +52,18 @@ const rows: RateRow[] = [
     description="Comparison of the official NBU rate with the average across 5 banks"
   />
 
-  <UiCard class="overflow-hidden">
+  <div v-if="currencyStore.isLoading" class="space-y-2">
+    <UiSkeleton v-for="i in 5" :key="i" class="h-12" />
+  </div>
+
+  <UiCard v-else class="overflow-hidden">
     <UiTable :columns="columns" :rows="rows">
       <template #cell-currency="{ row }">
         <UiBadge>{{ row.currency }}</UiBadge>
       </template>
       <template #cell-nbu="{ row }">{{ row.nbu?.toFixed(4) ?? "—" }}</template>
-      <template #cell-avg_buy="{ row }">{{ row.avg_buy?.toFixed(4) ?? "—" }}</template>
-      <template #cell-avg_sell="{ row }">{{ row.avg_sell?.toFixed(4) ?? "—" }}</template>
+      <template #cell-buy="{ row }">{{ row.buy?.toFixed(4) ?? "—" }}</template>
+      <template #cell-sell="{ row }">{{ row.sell?.toFixed(4) ?? "—" }}</template>
     </UiTable>
   </UiCard>
 </template>
