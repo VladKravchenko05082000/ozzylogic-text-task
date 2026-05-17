@@ -26,6 +26,7 @@ Client:
 ```bash
 cd client
 npm i
+npm install -D @tailwindcss/vite tailwindcss tw-animate-css
 npm run dev
 ```
 
