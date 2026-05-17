@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import AuthLayout from "./layouts/AuthLayout.vue";
+import AppLayout from "./layouts/appLayout/AppLayout.vue";
 </script>
 
 <template>
-  <AuthLayout>
+  <AppLayout>
     <router-view v-slot="{ Component }">
       <component :is="Component" />
     </router-view>
-  </AuthLayout>
+  </AppLayout>
 </template>

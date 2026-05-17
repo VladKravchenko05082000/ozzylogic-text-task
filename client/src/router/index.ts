@@ -26,9 +26,9 @@ const routes = [
     meta: { title: "Банк" },
   },
   {
-    path: "/summary",
-    name: "summary",
-    component: () => import("@/views/summary/SummaryView.vue"),
+    path: "/nbu",
+    name: "nbu",
+    component: () => import("@/views/nbu/NbuSummaryView.vue"),
     meta: { title: "НБУ і середнє" },
   },
   {
