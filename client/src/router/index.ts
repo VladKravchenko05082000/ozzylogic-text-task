@@ -17,13 +17,13 @@ const routes = [
   {
     path: "/banks",
     name: "banks",
-    component: () => import("@/views/banks/BanksView.vue"),
+    component: () => import("@/views/banks/banks-info/BanksView.vue"),
     meta: { title: "Banks", requiresAuth: true },
   },
   {
     path: "/banks/:slug",
     name: "bank-detail",
-    component: () => import("@/views/banks/BankDetailView.vue"),
+    component: () => import("@/views/banks/bank-details/BankDetailView.vue"),
     meta: { title: "Bank", requiresAuth: true },
   },
   {

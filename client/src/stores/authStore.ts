@@ -4,6 +4,8 @@ import { defineStore } from "pinia";
 import { authApi } from "@/api/auth";
 
 import { useUserStore } from "./userStore";
+import { useBanksStore } from "./banksStore";
+import { useCurrencyStore } from "./currencyStore";
 
 export type AuthTab = "login" | "register";
 
@@ -66,6 +68,8 @@ export const useAuthStore = defineStore("auth", () => {
 
   async function logout() {
     const userStore = useUserStore();
+    const banksStore = useBanksStore();
+    const currencyStore = useCurrencyStore();
 
     const refresh = localStorage.getItem("refresh_token");
 
@@ -75,8 +79,11 @@ export const useAuthStore = defineStore("auth", () => {
       }
     } catch (_) {}
 
+    setTab("login");
     clearTokens();
     userStore.clearUser();
+    banksStore.clearBanks();
+    currencyStore.clearCurrency();
   }
 
   return {

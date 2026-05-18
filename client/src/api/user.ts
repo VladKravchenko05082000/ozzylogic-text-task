@@ -8,7 +8,7 @@ interface UserDataInterface {
 interface UpdateUserDataPayloadInterface extends UserDataInterface {}
 
 interface ChangePasswordPayloadInterface {
-  currentPassword: string;
+  current_password: string;
   new_password: string;
 }
 

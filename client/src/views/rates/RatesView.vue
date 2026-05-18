@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { computed, onMounted } from "vue";
 
 import { useBanksStore } from "@/stores/banksStore";
 import { useCurrencyStore } from "@/stores/currencyStore";
@@ -9,15 +9,13 @@ import UiBadge from "@/components/ui/UiBadge.vue";
 import UiEmpty from "@/components/ui/UiEmpty.vue";
 import UiSkeleton from "@/components/ui/UiSkeleton.vue";
 import UiTable, { type TableColumn } from "@/components/ui/UiTable.vue";
+import RatesFiltersSection from "./components/RatesFiltersSection.vue";
 
 const banksStore = useBanksStore();
 const currencyStore = useCurrencyStore();
 
-const selectedBanks = ref<string[]>([]);
-const selectedCurrencies = ref<string[]>([]);
-
 const bankMap = computed(() =>
-  Object.fromEntries(banksStore.banks.map((bank) => [bank.slug, bank]))
+  Object.fromEntries(banksStore.banks.map((bank) => [bank.slug, bank])),
 );
 
 const ratesColumns: TableColumn[] = [
@@ -27,87 +25,40 @@ const ratesColumns: TableColumn[] = [
   { key: "sell", label: "Sell", align: "right" },
 ];
 
-function toggle(list: string[], value: string) {
-  const index = list.indexOf(value);
-  if (index === -1) list.push(value);
-  else list.splice(index, 1);
-  refresh();
-}
-
-function refresh() {
-  currencyStore.fetchRates({
-    banks: selectedBanks.value,
-    currencies: selectedCurrencies.value,
-  });
-}
-
 onMounted(async () => {
-  await Promise.all([
+  const promises: Promise<unknown>[] = [
     banksStore.fetchBanks(),
     currencyStore.fetchCurrencies(),
-    currencyStore.fetchRates({ banks: [], currencies: [] }),
-  ]);
+  ];
+  if (!currencyStore.rates.length) {
+    promises.push(
+      currencyStore.fetchRates({
+        banks: currencyStore.selectedBanks,
+        currencies: currencyStore.selectedCurrencies,
+      }),
+    );
+  }
+  await Promise.all(promises);
 });
 </script>
 
 <template>
   <PageHeader title="Exchange Rates" description="Current buy and sell rates across all banks" />
 
-  <!-- FILTERS -->
   <UiCard class="mb-6 p-4 sm:p-5">
-    <div class="space-y-4">
-      <div>
-        <div class="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          Currencies
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <button
-            v-for="currency in currencyStore.currencies"
-            :key="currency"
-            @click="toggle(selectedCurrencies, currency)"
-            :class="[
-              'rounded-md px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
-              selectedCurrencies.includes(currency)
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/70',
-            ]"
-          >
-            {{ currency }}
-          </button>
-        </div>
-      </div>
-
-      <div>
-        <div class="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          Banks
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <button
-            v-for="bank in banksStore.banks"
-            :key="bank.slug"
-            @click="toggle(selectedBanks, bank.slug)"
-            :class="[
-              'rounded-md px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
-              selectedBanks.includes(bank.slug)
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/70',
-            ]"
-          >
-            {{ bank.name }}
-          </button>
-        </div>
-      </div>
-    </div>
+    <RatesFiltersSection />
   </UiCard>
 
-  <!-- LOADING -->
   <div v-if="currencyStore.isLoading" class="space-y-2">
     <UiSkeleton v-for="skeletonIndex in 5" :key="skeletonIndex" class="h-14" />
   </div>
 
-  <!-- LIST -->
   <UiCard v-else-if="currencyStore.rates.length" class="overflow-hidden">
-    <UiTable :columns="ratesColumns" :rows="currencyStore.rates" rowClass="hover:bg-accent/40 transition-colors">
+    <UiTable
+      :columns="ratesColumns"
+      :rows="currencyStore.rates"
+      rowClass="hover:bg-accent/40 transition-colors"
+    >
       <template #cell-bank_slug="{ row }">
         {{ bankMap[row.bank_slug]?.name || row.bank_slug }}
       </template>

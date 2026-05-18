@@ -8,6 +8,7 @@ import UiEmpty from "@/components/ui/UiEmpty.vue";
 import UiSkeleton from "@/components/ui/UiSkeleton.vue";
 
 import { useBanksStore } from "@/stores/banksStore";
+import BanksCard from "./components/BanksCard.vue";
 
 const bankStore = useBanksStore();
 
@@ -29,23 +30,7 @@ onMounted(() => bankStore.fetchBanks());
       class="block"
     >
       <UiCard hoverable class="p-4 h-full">
-        <div class="flex items-start gap-3">
-          <div
-            v-if="bank.logo"
-            class="h-10 w-10 shrink-0 rounded-md bg-muted overflow-hidden flex items-center justify-center"
-          >
-            <img :src="bank.logo" :alt="bank.name" class="h-full w-full object-contain" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <h3 class="font-medium truncate">{{ bank.name }}</h3>
-            <p class="text-xs text-muted-foreground mt-0.5">
-              {{ bank.phone || "—" }}
-            </p>
-            <p v-if="bank.rating" class="text-xs text-muted-foreground mt-1">
-              Rating: {{ bank.rating }}
-            </p>
-          </div>
-        </div>
+        <BanksCard :logo="bank.logo" :name="bank.name" :phone="bank.phone" :rating="bank.rating" />
       </UiCard>
     </RouterLink>
   </div>

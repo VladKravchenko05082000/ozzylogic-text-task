@@ -3,14 +3,15 @@ import { computed, ref } from "vue";
 
 import { useForm } from "@vuehookform/core";
 
+import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from "vue-router";
+
 import PasswordEyeOpenIcon from "@/components/icons/password-eyes/PasswordEyeOpenIcon.vue";
 import PasswordEyeCloseIcon from "@/components/icons/password-eyes/PasswordEyeCloseIcon.vue";
 import UiInput from "@/components/ui/UiInput.vue";
 import UiButton from "@/components/ui/UiButton.vue";
 
 import { authSchema } from "@/schemas/authSchema";
-import { useAuthStore } from "@/stores/authStore";
-import { useRouter } from "vue-router";
 
 const { register, handleSubmit, formState, watch, setError } = useForm({
   schema: authSchema,

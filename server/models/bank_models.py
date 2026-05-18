@@ -106,7 +106,7 @@ def get_bank_info(slug: str) -> dict | None:
         rates = cursor.fetchall()
 
         cursor.execute(
-            "SELECT name, address, latitude, longitude, phone FROM bank_branches WHERE bank_id = ?",
+            "SELECT name, address, latitude, longitude, phone FROM bank_branches WHERE bank_id = ? LIMIT 100",
             (bank_id,)
         )
         branches = cursor.fetchall()

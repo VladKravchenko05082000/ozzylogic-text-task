@@ -6,7 +6,7 @@ import MobileHeader from "./mobile/MobileHeader.vue";
 
 import { mobileBreakPoint } from "@/configs/general-constants";
 
-import { NavLinkItem } from "@/types/general-types";
+import { type NavLinkItem } from "@/types/general-types";
 import { useUserStore } from "@/stores/userStore";
 import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "vue-router";

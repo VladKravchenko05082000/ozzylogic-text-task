@@ -67,6 +67,11 @@ export const useBanksStore = defineStore("banks", () => {
   const summary = ref({ nbu: [], banks_average: [] });
   const isLoading = ref(false);
   const error = ref<string | null>(null);
+  const nearestBranches = ref<NearestBranch[]>([]);
+  const branchesLat = ref<number | null>(null);
+  const branchesLng = ref<number | null>(null);
+  const branchesMaxCount = ref<number>(10);
+  const branchesMaxDistance = ref<number>(10);
 
   async function fetchBanks(): Promise<BanksViewListItemType[]> {
     isLoading.value = true;
@@ -109,6 +114,7 @@ export const useBanksStore = defineStore("banks", () => {
         limit: filters.limit,
       };
       const { data }: { data: NearestBranchesResponse } = await banksApi.getNearestBranches(params);
+      nearestBranches.value = data.branches;
       return data.branches;
     } catch (e: unknown) {
       error.value = e instanceof Error ? e.message : String(e);
@@ -118,12 +124,28 @@ export const useBanksStore = defineStore("banks", () => {
     }
   }
 
+  function clearBanks() {
+    banks.value = [];
+    currentBank.value = null;
+    nearestBranches.value = [];
+    branchesLat.value = null;
+    branchesLng.value = null;
+    branchesMaxCount.value = 10;
+    branchesMaxDistance.value = 10;
+  }
+
   return {
     banks,
     currentBank,
     summary,
     isLoading,
     error,
+    nearestBranches,
+    branchesLat,
+    branchesLng,
+    branchesMaxCount,
+    branchesMaxDistance,
+    clearBanks,
     fetchBanks,
     fetchBank,
     fetchNearestBranches,

@@ -1,5 +1,7 @@
 Disclaimer: All tasks were solved using Claude Code, Claude.ai, and Grok.ai
 
+A small note — not all tasks were described here. Some I simply forgot to add.
+
 1.  Server
     Promts:
     Prepare me a list of necessary libraries for developing an application in pure Python according to the following requirements: (requirements from the technical specification)
@@ -126,6 +128,8 @@ Disclaimer: All tasks were solved using Claude Code, Claude.ai, and Grok.ai
 
     Implement refresh (via the refresh function in authApi) of the authorization token in axios on a 401 error
 
+    Replace (some part of parent component layout ) to (name of child component) and updates import in child component and remove old imports in parent component
+
     Tasks solved thanks to AI:
     Creating the routing
     Debugging and typing of the component library
@@ -133,12 +137,14 @@ Disclaimer: All tasks were solved using Claude Code, Claude.ai, and Grok.ai
     Implementation of the configurable table component
     Token refresh in the axios interceptor
     Determining the user's geolocation
+    Component decomposition
 
     Parts of the code were refined manually:
     Login logic
     Registration logic
     Logic for retrieving currency rate history, and its parsing on the frontend
     All stores were manually refined
+    Component decomposition
 
     Solutions were modified after generation:
     Validation of the inputs on branches

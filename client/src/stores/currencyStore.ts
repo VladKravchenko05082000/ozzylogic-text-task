@@ -46,7 +46,7 @@ type HistoryFilterParamsType = {
   to: string;
 };
 
-type HistoryRateItem = {
+export type HistoryRateItem = {
   bank_slug: string;
   currency: string;
   buy: number;
@@ -61,6 +61,12 @@ type HistoryResponse = {
 export const useCurrencyStore = defineStore("currency", () => {
   const currencies = ref<string[]>([]);
   const rates = ref<RateItemType[]>([]);
+  const selectedBanks = ref<string[]>([]);
+  const selectedCurrencies = ref<string[]>([]);
+  const history = ref<HistoryRateItem[]>([]);
+  const historySelectedCurrency = ref("USD");
+  const historyDateFrom = ref("");
+  const historyDateTo = ref("");
   const summaryNbuRatesList = ref<NbuSummaryRatesItem>({
     nbu_latest_rates: [],
     average_banks_rates: [],
@@ -125,6 +131,7 @@ export const useCurrencyStore = defineStore("currency", () => {
         to: filters.to,
       };
       const { data }: { data: HistoryResponse } = await currencyApi.getRatesHistory(params);
+      history.value = data.history;
       return data.history;
     } catch (e: unknown) {
       error.value = e instanceof Error ? e.message : String(e);
@@ -134,12 +141,30 @@ export const useCurrencyStore = defineStore("currency", () => {
     }
   }
 
+  function clearCurrency() {
+    currencies.value = [];
+    rates.value = [];
+    selectedBanks.value = [];
+    selectedCurrencies.value = [];
+    history.value = [];
+    historySelectedCurrency.value = "USD";
+    historyDateFrom.value = "";
+    historyDateTo.value = "";
+  }
+
   return {
     currencies,
     rates,
+    selectedBanks,
+    selectedCurrencies,
+    history,
+    historySelectedCurrency,
+    historyDateFrom,
+    historyDateTo,
     summaryNbuRatesList,
     isLoading,
     error,
+    clearCurrency,
     fetchCurrencies,
     fetchRates,
     fetchNbuSummaryRates,
